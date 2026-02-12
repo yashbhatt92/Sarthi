@@ -2,24 +2,24 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Vite;
+use App\Models\ServiceRequest;
+use App\Policies\ServiceRequestPolicy;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        Vite::prefetch(concurrency: 3);
+        Gate::policy(ServiceRequest::class, ServiceRequestPolicy::class);
+
+        Broadcast::routes(['middleware' => ['web', 'auth']]);
+
+        require base_path('routes/channels.php');
     }
 }
